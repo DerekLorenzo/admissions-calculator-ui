@@ -51,7 +51,7 @@ export default function Home() {
     }
 
     return (
-        <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-24">
+        <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-6">
             <div>
                 <Header/>
             </div>
