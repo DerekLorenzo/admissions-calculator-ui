@@ -1,6 +1,6 @@
 'use client';
+import React, {useRef, useState} from "react";
 import Multiselect from 'multiselect-react-dropdown';
-import {useState} from "react";
 import Header from "@/app/common/header";
 import Footer from "@/app/common/footer";
 
@@ -9,11 +9,13 @@ export default function Home() {
     const [selectedColleges, setSelectedColleges] = useState<any[]>([]);
     const [calculatedRate, setCalculatedRate] = useState<number>(-1);
 
-    if (typeof window !== "undefined" && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        console.log("dark mode")
+    const multiselectRef = useRef<Multiselect>(null);
+
+    if (typeof window !== "undefined") if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        console.log("Detected mode: Dark")
         document.documentElement.classList.add('dark')
-    } else if (typeof window !== "undefined") {
-        console.log("light mode")
+    } else {
+        console.log("Detected mode: Light")
         document.documentElement.classList.remove('dark')
     }
 
@@ -27,6 +29,11 @@ export default function Home() {
             console.log(error);
         }
     };
+
+    const resetSelectedField = () => {
+        multiselectRef.current?.resetSelectedValues();
+        setCalculatedRate(-1);
+    }
 
     const getCalculatedRate = async () => {
         try {
@@ -49,17 +56,14 @@ export default function Home() {
 
     const handleChangeMultiselect = (choices: string[]) => {
         setSelectedColleges(choices);
-        console.log(selectedColleges);
     }
 
     if (colleges.length === 0){
         callAPI().then(() => console.log("Retrieved Colleges"));
-    } else {
-        console.log(colleges);
     }
 
     return (
-        <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-6 dark:bg-slate-800">
+        <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-2 dark:bg-slate-800">
             <div>
                 <Header/>
             </div>
@@ -74,6 +78,7 @@ export default function Home() {
                         }}
                         onRemove={handleChangeMultiselect}
                         onSelect={handleChangeMultiselect}
+                        ref={multiselectRef}
                     />
                 </div>
             </div>
@@ -89,16 +94,23 @@ export default function Home() {
                 <div className="flex justify-center col-span-6 sm:col-span-6 md:col-span-6 lg:col-span-2 xl:col-span-2">
                     <div
                         className="bg-white shadow-xl border border-solid rounded-lg px-4 py-6 mx-4 my-4 md:w-1/3 sm:w-1/2">
-                        <div className="text-nowrap justify-center text-center">
+                        <div className="text-nowrap">
                             <div>
-                            <span>
-                                Estimated Acceptance Rate:
-                            </span>
+                                <div className="align-top text-right">
+                                    <button
+                                        className="bg-sky-600 hover:bg-blue-700 text-white font-bold p-1 rounded-md"
+                                        onClick={resetSelectedField}>Reset</button>
+                                </div>
+                                <div className="text-center">
+                                    <span>
+                                    Estimated Acceptance Rate:
+                                    </span>
+                                </div>
                             </div>
-                            <div className="pt-2">
-                            <span className="font-bold">
-                                {calculatedRate + "%"}
-                            </span>
+                            <div className="pt-2 text-center">
+                                <span className="font-bold">
+                                    {calculatedRate + "%"}
+                                </span>
                             </div>
                         </div>
                         <div className="flex mx-auto bg-gray-200 rounded-md text-balance text-center py-4 my-2">
