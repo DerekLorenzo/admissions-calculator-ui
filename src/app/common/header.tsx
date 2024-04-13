@@ -27,7 +27,7 @@ export default function Header() {
                 <div className="flex lg:flex-1">
                     <a href="#" className="-m-1.5 p-1.5">
                         <h2 className="text-xl font-bold leading-7 text-sky-600 dark:text-white sm:truncate sm:text-xl sm:tracking-tight">
-                            Admissions Rate Calculator
+                            Admitted
                         </h2>
                     </a>
                 </div>
@@ -115,7 +115,7 @@ export default function Header() {
                     <div className="flex items-center justify-between">
                         <a href="#" className="-m-1.5 p-1.5">
                             <h2 className="text-xl font-bold leading-7 text-sky-600 sm:truncate sm:text-xl sm:tracking-tight">
-                                Admissions Rate Calculator
+                                Admitted
                             </h2>
                         </a>
                         <button
