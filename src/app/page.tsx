@@ -9,6 +9,14 @@ export default function Home() {
     const [selectedColleges, setSelectedColleges] = useState<any[]>([]);
     const [calculatedRate, setCalculatedRate] = useState<number>(-1);
 
+    if (typeof window !== "undefined" && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        console.log("dark mode")
+        document.documentElement.classList.add('dark')
+    } else if (typeof window !== "undefined") {
+        console.log("light mode")
+        document.documentElement.classList.remove('dark')
+    }
+
     const callAPI = async () => {
         try {
             const res = await fetch(
@@ -51,11 +59,11 @@ export default function Home() {
     }
 
     return (
-        <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-6">
+        <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-6 dark:bg-slate-800">
             <div>
                 <Header/>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center pt-4">
                 <div className="md:w-1/2 sm:w-3/4">
                     <Multiselect
                         style={{chips: {background: "rgb(2 132 199)"}}}
