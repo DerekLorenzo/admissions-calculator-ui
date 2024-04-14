@@ -56,8 +56,8 @@ export default function RateInfoDialog({open, setOpen}: {open: boolean, setOpen:
                                                 <p>
                                                     The Combined Rate Calculator is a tool designed to estimate the
                                                     likelihood that a typical applicant is admitted to at least one of
-                                                    colleges or universities provided if the applicant were to apply to
-                                                    all of the colleges or universities provided.
+                                                    the colleges or universities provided if the applicant were to apply
+                                                    to all of the colleges or universities provided.
                                                 </p>
                                                 <br/>
                                                 <p>
