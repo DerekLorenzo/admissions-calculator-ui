@@ -10,6 +10,9 @@ export default function Footer() {
                         <li>
                             <a href="#" className="hover:underline me-4 md:me-6">Home</a>
                         </li>
+                        <li>
+                            <a href="mailto:admitted.feedback@gmail.com" className="hover:underline me-4 md:me-6">Contact</a>
+                        </li>
                     </ul>
                 </div>
                 <hr className="my-1 border-gray-200 sm:mx-auto lg:my-2"/>
