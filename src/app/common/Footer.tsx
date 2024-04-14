@@ -16,8 +16,11 @@ export default function Footer() {
                     </ul>
                 </div>
                 <hr className="my-1 border-gray-200 sm:mx-auto lg:my-2"/>
-                <span className="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2024 <a
-                    href="#" className="hover:underline">Admitted</a>. All Rights Reserved.</span>
+                <div className="flex justify-between">
+                    <span className="text-sm text-gray-500 text-left dark:text-gray-400">www.admitted.us</span>
+                    <span className="text-sm text-gray-500 text-right dark:text-gray-400">© 2024 <a
+                        href="#" className="hover:underline">Admitted</a>. All Rights Reserved.</span>
+                </div>
             </div>
         </footer>
     )
