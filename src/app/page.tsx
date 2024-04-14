@@ -77,6 +77,21 @@ export default function Home() {
             />
             <div className="flex justify-between pt-4">
                 <div className="px-6"/>
+                <div className="md:w-1/2 sm:w-3/4 text-center dark:text-gray-200 font-bold">
+                    <h2>Combined Rate Calculator</h2>
+                </div>
+                <div>
+                    <button
+                        type="button"
+                        className="mt-3 mr-1 rounded-md bg-sky-600 px-1 mx-3 shadow-sm hover:bg-sky-200 sm:mt-0"
+                        onClick={() => setDialogBoxOpen(true)}
+                    >
+                        <InformationCircleIcon className="h-6 w-6 font-extrabold text-white"
+                                   aria-hidden="true"/>
+                    </button>
+                </div>
+            </div>
+            <div className="flex justify-center pt-4">
                 <div className="md:w-1/2 sm:w-3/4">
                     <Multiselect
                         style={{chips: {background: "rgb(2 132 199)"}}}
@@ -89,16 +104,6 @@ export default function Home() {
                         onSelect={handleChangeMultiselect}
                         ref={multiselectRef}
                     />
-                </div>
-                <div>
-                    <button
-                        type="button"
-                        className="mt-3 mr-1 rounded-md bg-sky-600 px-1 mx-3 shadow-sm hover:bg-sky-200 sm:mt-0"
-                        onClick={() => setDialogBoxOpen(true)}
-                    >
-                        <InformationCircleIcon className="h-6 w-6 font-extrabold text-white"
-                                   aria-hidden="true"/>
-                    </button>
                 </div>
             </div>
             <div className="flex flex-col items-center pt-4">
