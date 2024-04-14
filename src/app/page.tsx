@@ -10,7 +10,8 @@ export default function Home() {
     const [colleges, setColleges] = useState<string[]>([]);
     const [selectedColleges, setSelectedColleges] = useState<any[]>([]);
     const [calculatedRate, setCalculatedRate] = useState<number>(-1);
-    const [dialogBoxOpen, setDialogBoxOpen] = useState(true)
+    //TODO: set dialog box to open only on first visit or until a do not show again checkbox is clicked
+    const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
 
     const multiselectRef = useRef<Multiselect>(null);
 
