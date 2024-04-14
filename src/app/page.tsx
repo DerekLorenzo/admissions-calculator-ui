@@ -1,13 +1,16 @@
 'use client';
 import React, {useRef, useState} from "react";
 import Multiselect from 'multiselect-react-dropdown';
-import Header from "@/app/common/header";
-import Footer from "@/app/common/footer";
+import Header from "@/app/common/Header";
+import Footer from "@/app/common/Footer";
+import RateInfoDialog from "@/app/combined-rate-calculator/RateInfoDialog";
+import {InformationCircleIcon} from "@heroicons/react/24/outline";
 
 export default function Home() {
     const [colleges, setColleges] = useState<string[]>([]);
     const [selectedColleges, setSelectedColleges] = useState<any[]>([]);
     const [calculatedRate, setCalculatedRate] = useState<number>(-1);
+    const [dialogBoxOpen, setDialogBoxOpen] = useState(true)
 
     const multiselectRef = useRef<Multiselect>(null);
 
@@ -67,7 +70,12 @@ export default function Home() {
             <div>
                 <Header/>
             </div>
-            <div className="flex justify-center pt-4">
+            <RateInfoDialog
+                open={dialogBoxOpen}
+                setOpen={setDialogBoxOpen}
+            />
+            <div className="flex justify-between pt-4">
+                <div className="px-6"/>
                 <div className="md:w-1/2 sm:w-3/4">
                     <Multiselect
                         style={{chips: {background: "rgb(2 132 199)"}}}
@@ -81,6 +89,16 @@ export default function Home() {
                         ref={multiselectRef}
                     />
                 </div>
+                <div>
+                    <button
+                        type="button"
+                        className="mt-3 mr-1 rounded-md bg-sky-600 px-1 mx-3 shadow-sm hover:bg-sky-200 sm:mt-0"
+                        onClick={() => setDialogBoxOpen(true)}
+                    >
+                        <InformationCircleIcon className="h-6 w-6 font-extrabold text-white"
+                                   aria-hidden="true"/>
+                    </button>
+                </div>
             </div>
             <div className="flex flex-col items-center pt-4">
                 <button
@@ -93,7 +111,7 @@ export default function Home() {
             {calculatedRate > 0 ?
                 <div className="flex justify-center col-span-6 sm:col-span-6 md:col-span-6 lg:col-span-2 xl:col-span-2">
                     <div
-                        className="bg-white shadow-xl border border-solid rounded-lg px-4 py-6 mx-4 my-4 md:w-1/3 sm:w-1/2">
+                        className="bg-white dark:bg-slate-600 dark:text-gray-200 shadow-xl border border-solid dark:border-black rounded-lg px-4 py-6 mx-4 my-4 md:w-1/3 sm:w-1/2">
                         <div className="text-nowrap">
                             <div>
                                 <div className="align-top text-right">
@@ -113,7 +131,7 @@ export default function Home() {
                                 </span>
                             </div>
                         </div>
-                        <div className="flex mx-auto bg-gray-200 rounded-md text-balance text-center py-4 my-2">
+                        <div className="flex mx-auto bg-gray-200 dark:bg-slate-500 rounded-md text-balance text-center py-4 my-2">
                             Note: This calculation is not a guarantee of admission but rather an estimation of the
                             likelihood of acceptance for a typical candidate based on historical acceptance rates.
                         </div>

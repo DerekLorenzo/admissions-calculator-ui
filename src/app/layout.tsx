@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Admissions Rate Calculator',
+  title: 'Admitted',
   description: 'Author: Enzo Tech™',
 }
 
