@@ -22,7 +22,7 @@ export default function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
     return (
-        <header className="bg-white dark:bg-sky-600 border-b-2 dark:border-b-0 border-solid border-gray-400 rounded-full">
+        <header className="bg-white dark:bg-slate-800 border-b-2 dark:border-b-2 border-solid border-gray-400 rounded-full">
             <nav className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <a href="#" className="-m-1.5 p-1.5">
@@ -34,7 +34,7 @@ export default function Header() {
                 <div className="flex lg:hidden">
                     <button
                         type="button"
-                        className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+                        className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-white"
                         onClick={() => setMobileMenuOpen(true)}
                     >
                         <span className="sr-only">Open main menu</span>
@@ -104,7 +104,7 @@ export default function Header() {
                     }
                 </Popover.Group>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+                <a href="#" className="text-sm font-semibold leading-6 text-gray-900 dark:text-white">
                         Home <span aria-hidden="true">&rarr;</span>
                     </a>
                 </div>
@@ -120,7 +120,7 @@ export default function Header() {
                         </a>
                         <button
                             type="button"
-                            className="-m-2.5 rounded-md p-2.5 text-gray-700"
+                            className="-m-2.5 rounded-md p-2.5 text-gray-700 dark:text-gray-200"
                             onClick={() => setMobileMenuOpen(false)}
                         >
                             <span className="sr-only">Close menu</span>
