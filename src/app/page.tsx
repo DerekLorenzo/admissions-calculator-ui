@@ -71,7 +71,7 @@ export default function Home() {
         setSelectedColleges(choices);
     };
 
-    if (colleges.length === 0){
+    if (colleges.length === 0) {
         callAPI().then(() => console.log("Retrieved Colleges"));
     }
 
