@@ -17,10 +17,8 @@ export default function Home() {
     const multiselectRef = useRef<Multiselect>(null);
 
     if (typeof window !== "undefined") if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        console.log("Detected mode: Dark")
         document.documentElement.classList.add('dark')
     } else {
-        console.log("Detected mode: Light")
         document.documentElement.classList.remove('dark')
     }
 
