@@ -6,6 +6,7 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, PhoneIcon } from '@heroicons/react/20/solid'
+import Image from "next/image";
 
 const products = [
     { name: 'Placeholder', description: 'this is a placeholder for future use', href: '#', icon: ChartPieIcon },
@@ -26,9 +27,8 @@ export default function Header() {
             <nav className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <a href="#" className="-m-1.5 p-1.5">
-                        <h2 className="text-xl font-bold leading-7 text-sky-600 dark:text-white sm:truncate sm:text-xl sm:tracking-tight">
-                            Admitted
-                        </h2>
+                        <Image src="/admitted_logo_light.png" className="hidden dark:block" width={140} height={34} alt="Admitted Logo"/>
+                        <Image src="/admitted_logo.png" className="block dark:hidden" width={140} height={34} alt="Admitted Logo"/>
                     </a>
                 </div>
                 <div className="flex lg:hidden">
@@ -114,9 +114,8 @@ export default function Header() {
                 <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white dark:bg-slate-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
                     <div className="flex items-center justify-between">
                         <a href="#" className="-m-1.5 p-1.5">
-                            <h2 className="text-xl font-bold leading-7 text-sky-600 sm:truncate sm:text-xl sm:tracking-tight">
-                                Admitted
-                            </h2>
+                            <Image src="/admitted_icon_light.png" className="hidden dark:block" width={34} height={34} alt=""/>
+                            <Image src="/admitted_icon.png" className="block dark:hidden" width={34} height={34} alt=""/>
                         </a>
                         <button
                             type="button"
