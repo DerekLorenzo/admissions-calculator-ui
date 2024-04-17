@@ -27,8 +27,18 @@ export default function Header() {
             <nav className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <a href="#" className="-m-1.5 p-1.5">
-                        <Image src="/admitted_logo_light.png" className="hidden dark:block" width={140} height={34} alt="Admitted Logo"/>
-                        <Image src="/admitted_logo.png" className="block dark:hidden" width={140} height={34} alt="Admitted Logo"/>
+                        <div className="flex lg:hidden">
+                            <Image src="/admitted_icon_light.png" className="hidden dark:block" width={34} height={34}
+                                   alt="Admitted Icon"/>
+                            <Image src="/admitted_icon.png" className="block dark:hidden" width={34} height={34}
+                                   alt="Admitted Icon"/>
+                        </div>
+                        <div className="hidden lg:flex">
+                            <Image src="/admitted_logo_light.png" className="hidden dark:block" width={164} height={34}
+                                   alt="Admitted Logo"/>
+                            <Image src="/admitted_logo.png" className="block dark:hidden" width={164} height={34}
+                                   alt="Admitted Logo"/>
+                        </div>
                     </a>
                 </div>
                 <div className="flex lg:hidden">
@@ -104,7 +114,7 @@ export default function Header() {
                     }
                 </Popover.Group>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                <a href="#" className="text-sm font-semibold leading-6 text-gray-900 dark:text-white">
+                    <a href="#" className="text-sm font-semibold leading-6 text-gray-900 dark:text-white">
                         Home <span aria-hidden="true">&rarr;</span>
                     </a>
                 </div>
