@@ -1,7 +1,8 @@
+'use client';
 import RateInfoDialog from "@/app/combined-rate-calculator/RateInfoDialog";
 import {InformationCircleIcon} from "@heroicons/react/24/outline";
 import Multiselect from "multiselect-react-dropdown";
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 
 export default function CombinedRateCalculator() {
     const [colleges, setColleges] = useState<string[]>([]);
@@ -10,8 +11,27 @@ export default function CombinedRateCalculator() {
     //TODO: set dialog box to open only on first visit or until a do not show again checkbox is clicked
     const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
     const [submitButtonClicked, setSubmitButtonClicked] = useState(false);
-
+    const [cookies, setCookies] = useState<{ [key: string]: string }>({});
     const multiselectRef = useRef<Multiselect>(null);
+    const [called, setCalled] = useState(0);
+
+    const getCookies = () => {
+        const cookieSet: { [key: string]: string } = {};
+        document.cookie.split(';').forEach((cookie) => {
+            const [name, val] = cookie.split('=').map(c => c.trim());
+            cookieSet[name] = val;
+        })
+        setCookies(cookieSet);
+    }
+
+    useEffect(() => {
+        getCookies();
+
+        if (!Object.keys(cookies).includes("visitedRateCalculator") || cookies["visitedRateCalculator"] != "true") {
+            document.cookie = "visitedRateCalculator=true";
+            setDialogBoxOpen(true);
+        }
+    }, [setDialogBoxOpen, cookies])
 
     const callAPI = async () => {
         try {
@@ -60,8 +80,9 @@ export default function CombinedRateCalculator() {
         setSelectedColleges(choices);
     };
 
-    if (colleges.length === 0) {
+    if (colleges.length === 0 && called < 5) {
         callAPI().then(() => console.log("Retrieved Colleges"));
+        setCalled(count => count + 1);
     }
 
     return (
