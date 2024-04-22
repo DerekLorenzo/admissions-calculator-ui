@@ -8,10 +8,10 @@ export default function CombinedRateCalculator() {
     const [colleges, setColleges] = useState<string[]>([]);
     const [selectedColleges, setSelectedColleges] = useState<any[]>([]);
     const [calculatedRate, setCalculatedRate] = useState<number>(-1);
-    //TODO: set dialog box to open only on first visit or until a do not show again checkbox is clicked
     const [dialogBoxOpen, setDialogBoxOpen] = useState(false);
     const [submitButtonClicked, setSubmitButtonClicked] = useState(false);
     const [cookies, setCookies] = useState<{ [key: string]: string }>({});
+    const [cookiesChecked, setCookiesChecked] = useState(false);
     const multiselectRef = useRef<Multiselect>(null);
     const [called, setCalled] = useState(0);
 
@@ -25,13 +25,16 @@ export default function CombinedRateCalculator() {
     }
 
     useEffect(() => {
-        getCookies();
-
-        if (!Object.keys(cookies).includes("visitedRateCalculator") || cookies["visitedRateCalculator"] != "true") {
-            document.cookie = "visitedRateCalculator=true";
-            setDialogBoxOpen(true);
+        if (!cookiesChecked) {
+            getCookies();
+            setCookiesChecked(true);
+        } else {
+            if (!Object.keys(cookies).includes("visitedRateCalculator") || cookies["visitedRateCalculator"] != "true") {
+                document.cookie = "visitedRateCalculator=true";
+                setDialogBoxOpen(true);
+            }
         }
-    }, [setDialogBoxOpen, cookies])
+    }, [setCookiesChecked, setDialogBoxOpen, cookiesChecked, cookies])
 
     const callAPI = async () => {
         try {
