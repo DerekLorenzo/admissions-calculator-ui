@@ -17,13 +17,13 @@ export default function RootLayout({
 }) {
   return (
       <html lang="en">
-      <body>
-      <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-2 dark:bg-slate-800">
-          <Header/>
-          {children}
-          <Footer/>
-      </main>
-      </body>
+          <body>
+              <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-2 dark:bg-slate-800">
+                  <Header/>
+                  {children}
+                  <Footer/>
+              </main>
+          </body>
       </html>
   )
 }

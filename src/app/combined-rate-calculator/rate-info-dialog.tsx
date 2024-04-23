@@ -2,7 +2,9 @@ import React, { Fragment, useRef} from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
-export default function RateInfoDialog({open, setOpen}: {open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
+export default function RateInfoDialog({open, setOpen}: {
+    open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}) {
     const cancelButtonRef = useRef(null)
 
     return (
@@ -31,7 +33,8 @@ export default function RateInfoDialog({open, setOpen}: {open: boolean, setOpen:
                             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
-                            <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                            <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white shadow-xl
+                            transition-all sm:my-8 sm:w-full sm:max-w-lg">
                                 <div className="bg-white dark:bg-slate-800 px-4 pb-4 pt-2 sm:p-2 sm:pb-4">
                                     <div className="text-center">
                                         <div className="sm:flex justify-between">
@@ -43,7 +46,8 @@ export default function RateInfoDialog({open, setOpen}: {open: boolean, setOpen:
                                             </Dialog.Title>
                                             <button
                                                 type="button"
-                                                className="mt-3 rounded-md bg-sky-600 px-3 py-2 shadow-sm hover:bg-sky-200 sm:mt-0"
+                                                className="mt-3 rounded-md bg-sky-600 px-3 py-2 shadow-sm
+                                                hover:bg-sky-200 sm:mt-0"
                                                 onClick={() => setOpen(false)}
                                                 ref={cancelButtonRef}
                                             >
@@ -51,7 +55,8 @@ export default function RateInfoDialog({open, setOpen}: {open: boolean, setOpen:
                                                        aria-hidden="true"/>
                                             </button>
                                         </div>
-                                        <div className="mt-4 mx-2 text-sm text-gray-500 dark:text-gray-400 text-center sm:mt-2">
+                                        <div className="mt-4 mx-2 text-sm text-gray-500 dark:text-gray-400 text-center
+                                        sm:mt-2">
                                             <div className="mt-2">
                                                 <p>
                                                     The Combined Rate Calculator is a tool designed to estimate the
