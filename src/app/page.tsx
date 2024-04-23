@@ -1,8 +1,5 @@
 'use client';
 import React from "react";
-import Header from "@/app/common/Header";
-import Footer from "@/app/common/Footer";
-import CombinedRateCalculator from "@/app/combined-rate-calculator/CombinedRateCalculator";
 
 export default function Home() {
     if (typeof window !== "undefined") if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -12,16 +9,8 @@ export default function Home() {
     }
 
     return (
-        <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-2 dark:bg-slate-800">
-            <div>
-                <Header/>
-            </div>
-            <div>
-                <CombinedRateCalculator/>
-            </div>
-            <div className="flex justify-center">
-                <Footer/>
-            </div>
-        </main>
+        <div className="flex justify-center">
+            Home
+        </div>
     );
 }

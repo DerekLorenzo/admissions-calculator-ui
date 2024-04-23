@@ -1,5 +1,5 @@
 'use client';
-import RateInfoDialog from "@/app/combined-rate-calculator/RateInfoDialog";
+import RateInfoDialog from "@/app/combined-rate-calculator/rate-info-dialog";
 import {InformationCircleIcon} from "@heroicons/react/24/outline";
 import Multiselect from "multiselect-react-dropdown";
 import React, {useEffect, useRef, useState} from "react";
@@ -13,7 +13,23 @@ export default function CombinedRateCalculator() {
     const [cookies, setCookies] = useState<{ [key: string]: string }>({});
     const [cookiesChecked, setCookiesChecked] = useState(false);
     const multiselectRef = useRef<Multiselect>(null);
-    const [called, setCalled] = useState(0);
+    const [called, setCalled] = useState(false);
+
+    const callAPI = async () => {
+        try {
+            const res = await fetch(
+                process.env.NEXT_PUBLIC_BASE_URL + '/app/api/getNames');
+            const data: string[] = await res.json();
+            setColleges(data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    if (colleges.length === 0 && !called) {
+        setCalled(true);
+        callAPI().then(() => console.log("Retrieved Colleges"));
+    }
 
     const getCookies = () => {
         const cookieSet: { [key: string]: string } = {};
@@ -36,17 +52,6 @@ export default function CombinedRateCalculator() {
         }
     }, [setCookiesChecked, setDialogBoxOpen, cookiesChecked, cookies])
 
-    const callAPI = async () => {
-        try {
-            const res = await fetch(
-                'https://us-central1-admissions-calculator.cloudfunctions.net/app/api/getNames');
-            const data: string[] = await res.json();
-            setColleges(data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
     const resetSelectedField = () => {
         multiselectRef.current?.resetSelectedValues();
         setSelectedColleges([]);
@@ -63,7 +68,7 @@ export default function CombinedRateCalculator() {
                 body: JSON.stringify({colleges: selectedColleges})
             }
             const res = await fetch(
-                'https://us-central1-admissions-calculator.cloudfunctions.net/app/api/getCalculatedRate',
+                 process.env.NEXT_PUBLIC_BASE_URL + '/app/api/getCalculatedRate',
                 payload);
             const data: number = await res.json();
             setCalculatedRate(data);
@@ -82,11 +87,6 @@ export default function CombinedRateCalculator() {
     const handleChangeMultiselect = (choices: string[]) => {
         setSelectedColleges(choices);
     };
-
-    if (colleges.length === 0 && called < 5) {
-        callAPI().then(() => console.log("Retrieved Colleges"));
-        setCalled(count => count + 1);
-    }
 
     return (
         <div>
