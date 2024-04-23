@@ -58,6 +58,13 @@ export default function CombinedRateCalculator() {
         setCalculatedRate(-1);
     }
 
+    useEffect(() => {
+        let optionContainer = document.getElementsByClassName("optionContainer") as HTMLCollectionOf<HTMLDivElement>;
+        if (optionContainer[0]) (optionContainer[0] as HTMLDivElement).classList.add("text-black");
+        if (optionContainer[0]) (optionContainer[0] as HTMLDivElement).classList.add("dark:text-white");
+        if (optionContainer[0]) (optionContainer[0] as HTMLDivElement).classList.add("dark:bg-slate-800");
+    })
+
     const getCalculatedRate = async () => {
         try {
             const payload = {
@@ -86,6 +93,25 @@ export default function CombinedRateCalculator() {
 
     const handleChangeMultiselect = (choices: string[]) => {
         setSelectedColleges(choices);
+        closeOptionsList();
+    };
+
+    const closeOptionsList = () => {
+        let optionContainerList = document.getElementsByClassName("optionListContainer") as HTMLCollectionOf<HTMLDivElement>;
+        if (optionContainerList[0] && (optionContainerList[0] as HTMLDivElement).classList.contains("displayBlock")) {
+            (optionContainerList[0] as HTMLDivElement).classList.remove("displayBlock");
+        }
+        if (optionContainerList[0]) (optionContainerList[0] as HTMLDivElement).classList.add("displayNone");
+    }
+
+    const openOptionsList = () => {
+        let optionContainerList = document.getElementsByClassName("optionListContainer") as HTMLCollectionOf<HTMLDivElement>;
+        if (optionContainerList[0] && (optionContainerList[0] as HTMLDivElement).classList.contains("displayNone")) {
+            (optionContainerList[0] as HTMLDivElement).classList.remove("displayNone");
+        }
+        if (optionContainerList[0] && !(optionContainerList[0] as HTMLDivElement).classList.contains("displayBlock")) {
+            (optionContainerList[0] as HTMLDivElement).classList.add("displayBlock");
+        }
     };
 
     return (
@@ -102,7 +128,7 @@ export default function CombinedRateCalculator() {
                 <div>
                     <button
                         type="button"
-                        className="mt-3 mr-1 rounded-md bg-sky-600 px-1 mx-3 shadow-sm hover:bg-sky-200 sm:mt-0"
+                        className="mt-3 mr-1 rounded-md bg-sky-600 px-1 mx-3 shadow-sm hover:bg-sky-300 sm:mt-0"
                         onClick={() => setDialogBoxOpen(true)}
                     >
                         <InformationCircleIcon className="h-6 w-6 font-extrabold text-white"
@@ -113,12 +139,16 @@ export default function CombinedRateCalculator() {
             <div className="flex justify-center pt-4">
                 <div className="md:w-1/2 sm:w-3/4">
                     <Multiselect
-                        style={{chips: {background: "rgb(2 132 199)"}}}
+                        style={{
+                            chips: {background: "#0284c7"} //sky-600
+                        }}
                         className="multiselect"
                         isObject={false}
                         options={colleges}
                         onKeyPressFn={function noRefCheck() {
+                            openOptionsList();
                         }}
+                        avoidHighlightFirstOption={true}
                         onRemove={handleChangeMultiselect}
                         onSelect={handleChangeMultiselect}
                         ref={multiselectRef}
@@ -127,7 +157,7 @@ export default function CombinedRateCalculator() {
             </div>
             <div className="flex flex-col items-center pt-4">
                 <button
-                    className="bg-sky-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-full"
+                    className="bg-sky-600 hover:bg-sky-300 text-white font-bold py-1 px-3 rounded-full"
                     onClick={handleSubmit}
                 >
                     Get Calculated Rate
@@ -161,14 +191,14 @@ export default function CombinedRateCalculator() {
             {calculatedRate > 0 ?
                 <div className="flex justify-center col-span-6 sm:col-span-6 md:col-span-6 lg:col-span-2 xl:col-span-2">
                     <div
-                        className="bg-white dark:bg-slate-600 dark:text-gray-200 shadow-xl border border-solid
+                        className="bg-gray-100 dark:bg-slate-700 dark:text-gray-200 shadow-xl border border-solid
                         dark:border-black rounded-lg px-4 py-6 mx-4 my-4 md:w-1/3 sm:w-1/2"
                     >
                         <div className="text-nowrap">
                             <div>
                                 <div className="align-top text-right">
                                     <button
-                                        className="bg-sky-600 hover:bg-blue-700 text-white font-bold p-1 rounded-md"
+                                        className="bg-sky-600 hover:bg-sky-300 text-white font-bold p-1 rounded-md"
                                         onClick={resetSelectedField}>Reset
                                     </button>
                                 </div>
@@ -184,7 +214,7 @@ export default function CombinedRateCalculator() {
                                         </span>
                             </div>
                         </div>
-                        <div className="flex mx-auto bg-gray-200 dark:bg-slate-500 rounded-md text-balance text-center
+                        <div className="flex mx-auto bg-gray-200 dark:bg-slate-600 rounded-md text-balance text-center
                         py-4 my-2">
                             Note: This calculation is not a guarantee of admission but rather an estimation of the
                             likelihood of acceptance for a typical candidate based on historical acceptance rates.

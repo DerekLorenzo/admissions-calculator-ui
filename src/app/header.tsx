@@ -38,7 +38,7 @@ export default function Header() {
 
     return (
         <div>
-            <header className="bg-white dark:bg-slate-800 border-b-2 dark:border-b-2 border-solid border-gray-400
+            <header className="border-b-2 dark:border-b-2 border-solid border-gray-400
             rounded-full">
                 <nav className="mx-auto flex max-w-7xl items-center justify-between p-3 lg:px-8" aria-label="Global">
                     <div className="flex">
@@ -106,7 +106,9 @@ export default function Header() {
                                     leaveTo="opacity-0 translate-y-1"
                                 >
                                     <Menu.Items className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md
-                                    overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
+                                    overflow-hidden rounded-3xl bg-gray-200 dark:bg-slate-800 shadow-lg ring-1
+                                    ring-gray-900/5"
+                                    >
                                         <div className="p-4">
                                             {tools.map((item) => (
                                                 <Menu.Item key={"item-" + item.name}>
@@ -114,26 +116,29 @@ export default function Header() {
                                                         <Menu.Button
                                                             key={item.name}
                                                             className="group relative w-full flex items-center gap-x-6
-                                                            rounded-lg p-4 text-sm leading-6 hover:bg-gray-50"
+                                                            rounded-lg p-4 text-sm leading-6 hover:bg-gray-300
+                                                            hover:dark:bg-slate-600"
                                                         >
                                                             <div
                                                                 className="flex h-11 w-11 flex-none items-center
-                                                                justify-center rounded-lg bg-gray-50
-                                                                group-hover:bg-white">
+                                                                justify-center rounded-lg">
                                                                 <item.icon
-                                                                    className="h-6 w-6 text-gray-600
-                                                                    group-hover:text-indigo-600"
+                                                                    className="h-6 w-6 text-gray-600 dark:text-gray-400
+                                                                    group-hover:text-sky-600"
                                                                     aria-hidden="true"/>
                                                             </div>
                                                             <div className="flex-auto">
                                                                 <Link href={item.href}
-                                                                      className="block font-semibold text-gray-900"
+                                                                      className="block font-semibold text-gray-900
+                                                                      dark:text-gray-200"
                                                                       onClick={close}
                                                                 >
                                                                     {item.name}
                                                                     <span className="absolute inset-0"/>
                                                                 </Link>
-                                                                <p className="mt-1 text-gray-600">{item.description}</p>
+                                                                <p className="mt-1 text-gray-600 dark:text-gray-400">
+                                                                    {item.description}
+                                                                </p>
                                                             </div>
                                                         </Menu.Button>
                                                     )}
@@ -174,7 +179,7 @@ export default function Header() {
                 </nav>
                 <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
                     <div className="fixed inset-0 z-10" />
-                    <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white
+                    <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-gray-200
                     dark:bg-slate-800 px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
                         <div className="flex items-center justify-between">
                             <Link href="/" className="-m-1.5 p-1.5">
@@ -210,7 +215,8 @@ export default function Header() {
                                             <>
                                                 <Disclosure.Button className="flex w-full items-center justify-between
                                                 rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7
-                                                text-gray-900 dark:text-white hover:bg-gray-50">
+                                                text-gray-900 dark:text-white hover:bg-gray-300 hover:dark:bg-slate-600"
+                                                >
                                                     Tools
                                                     <ChevronDownIcon
                                                         className={classNames(open
@@ -227,7 +233,7 @@ export default function Header() {
                                                             href={item.href}
                                                             className="block rounded-lg py-2 pl-6 pr-3 text-sm
                                                             font-semibold leading-7 text-gray-900 dark:text-white
-                                                            hover:bg-gray-50"
+                                                            hover:bg-gray-300 hover:dark:bg-slate-600"
                                                             onClick={() => setMobileMenuOpen(false)}
                                                         >
                                                             {item.name}
@@ -252,7 +258,7 @@ export default function Header() {
                                     <Link
                                         href="/"
                                         className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7
-                                        text-gray-900 dark:text-gray-200 hover:bg-gray-50"
+                                        text-gray-900 dark:text-gray-200 hover:bg-gray-300 hover:dark:bg-slate-600"
                                         onClick={() => setMobileMenuOpen(false)}
                                     >
                                         Home

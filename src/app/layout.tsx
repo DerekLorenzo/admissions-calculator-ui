@@ -17,8 +17,8 @@ export default function RootLayout({
 }) {
   return (
       <html lang="en">
-          <body>
-              <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-2 dark:bg-slate-800">
+          <body className="text-black dark:text-gray-200 bg-white dark:bg-slate-900">
+              <main className="flex-initial max-w-full min-h-screen flex-col justify-between p-2">
                   <Header/>
                   {children}
                   <Footer/>
