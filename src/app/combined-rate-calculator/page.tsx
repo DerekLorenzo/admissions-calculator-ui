@@ -1,5 +1,5 @@
 'use client';
-import RateInfoDialog from "@/app/combined-rate-calculator/rate-info-dialog";
+import RateInfoDialog from "@/components/rate-info-dialog";
 import {InformationCircleIcon} from "@heroicons/react/24/outline";
 import Multiselect from "multiselect-react-dropdown";
 import React, {useEffect, useRef, useState} from "react";
@@ -14,6 +14,18 @@ export default function CombinedRateCalculator() {
     const [cookiesChecked, setCookiesChecked] = useState(false);
     const multiselectRef = useRef<Multiselect>(null);
     const [called, setCalled] = useState(false);
+    const infoDialogContents: { [key: string]: any } = {
+        title: "Combined Rate Calculator",
+        body: [
+            "The Combined Rate Calculator is a tool designed to estimate the likelihood that a typical applicant is " +
+            "admitted to at least one of the colleges or universities provided if the applicant were to apply to all of " +
+            "the colleges or universities provided.",
+            "This tool does not yet factor in any specific characteristics of the applicant such as GPA, standardized " +
+            "test scores, or demographics such as gender or race.",
+            "Disclaimer: This calculation is not a guarantee of admission but rather an estimation of the likelihood of " +
+            "acceptance for a typical candidate based on historical acceptance rates."
+        ]
+    }
 
     const callAPI = async () => {
         try {
@@ -119,6 +131,8 @@ export default function CombinedRateCalculator() {
             <RateInfoDialog
                 open={dialogBoxOpen}
                 setOpen={setDialogBoxOpen}
+                title={infoDialogContents.title}
+                content={infoDialogContents.body}
             />
             <div className="flex justify-between pt-4">
                 <div className="px-6"/>

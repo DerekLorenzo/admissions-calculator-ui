@@ -2,8 +2,8 @@ import React, { Fragment, useRef} from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
-export default function RateInfoDialog({open, setOpen}: {
-    open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>
+export default function RateInfoDialog({open, setOpen, title, content}: {
+    open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, title: string, content: string[]
 }) {
     const cancelButtonRef = useRef(null)
 
@@ -42,7 +42,7 @@ export default function RateInfoDialog({open, setOpen}: {
                                             <Dialog.Title
                                                 as="h3"
                                                 className="font-bold leading-10 dark:text-gray-200 text-gray-900">
-                                                Combined Rate Calculator
+                                                {title}
                                             </Dialog.Title>
                                             <button
                                                 type="button"
@@ -58,24 +58,12 @@ export default function RateInfoDialog({open, setOpen}: {
                                         <div className="mt-4 mx-2 text-sm text-gray-500 dark:text-gray-400 text-center
                                         sm:mt-2">
                                             <div className="mt-2">
-                                                <p>
-                                                    The Combined Rate Calculator is a tool designed to estimate the
-                                                    likelihood that a typical applicant is admitted to at least one of
-                                                    the colleges or universities provided if the applicant were to apply
-                                                    to all of the colleges or universities provided.
-                                                </p>
-                                                <br/>
-                                                <p>
-                                                    This tool does not yet factor in any specific characteristics of the
-                                                    applicant such as GPA, standardized test scores, or demographics
-                                                    such as gender or race.
-                                                </p>
-                                                <br/>
-                                                <p>
-                                                    Disclaimer: This calculation is not a guarantee of admission but
-                                                    rather an estimation of the likelihood of acceptance for a typical
-                                                    candidate based on historical acceptance rates.
-                                                </p>
+                                                {content.map((paragraph, idx) => (
+                                                    <p key={"paragraph" + idx}>
+                                                        {(idx > 0 &&  <br />)}
+                                                        {paragraph}
+                                                    </p>
+                                                    ))}
                                             </div>
                                         </div>
                                     </div>
