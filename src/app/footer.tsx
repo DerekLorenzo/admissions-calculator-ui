@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Footer() {
     return (
         <div className="flex justify-center">
-            <footer className="w-3/4 mt-32 rounded-lg shadow m-4 dark:bg-slate-800">
+            <footer className="w-3/4 mt-28 rounded-lg shadow m-4 dark:bg-slate-800">
                 <div className="w-full max-w-screen-xl mx-auto p-4 md:py-2">
                     <div className="sm:flex sm:items-center sm:justify-between">
                         <a href="#" className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">

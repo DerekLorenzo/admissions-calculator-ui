@@ -1,12 +1,14 @@
 'use client';
 import React, {useEffect, Fragment, useState} from "react";
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
-import { Combobox, Listbox, Transition } from '@headlessui/react'
+import { Combobox, Listbox, Transition, Tab } from '@headlessui/react'
 import RateInfoDialog from "@/components/rate-info-dialog";
 import {CheckIcon, ChevronUpDownIcon} from "@heroicons/react/20/solid";
 import {InformationCircleIcon} from "@heroicons/react/24/outline";
+import ScoreBarChart from "@/app/money-score/score-bar-chart";
 
 export default function MoneyScore() {
+    const [scores, setScores] = useState<{ [key: string]: any }>({})
     const [colleges, setColleges] = useState<string[]>([]);
     const [collegesWithMajors, setCollegesWithMajors] = useState<{ [key: string]: any }>({});
     const [majors, setMajors] = useState<string[]>([]);
@@ -15,7 +17,7 @@ export default function MoneyScore() {
     const [selectedMajor, setSelectedMajor] = useState("Choose One");
     const [selectedFirstGen, setSelectedFirstGen] = useState("Choose One");
     const [selectedGender, setSelectedGender] = useState("Choose One");
-    const [moneyScore, setMoneyScore] = useState({});
+    const [moneyScore, setMoneyScore] = useState<{ [key: string]: string }>({});
     const [infoDialogBoxOpen, setInfoDialogBoxOpen] = useState(false);
     const [firstGenDialogBoxOpen, setFirstGenDialogBoxOpen] = useState(false);
     const [submitButtonClicked, setSubmitButtonClicked] = useState(false);
@@ -44,24 +46,57 @@ export default function MoneyScore() {
             ]
     };
 
-    const filteredColleges = query === ''
+    const filteredColleges: string[] = query === ''
             ? colleges
             : colleges.filter((college) => {
                 return college.toLowerCase().includes(query.toLowerCase())
             });
 
-    const genders = [
+    const genders: string[] = [
         "Female",
         "Male",
         "Not listed",
         "Prefer not to say"
     ]
 
-    const firstGen = [
+    const firstGen: string[] = [
         "Yes",
         "No",
         "Not Sure"
     ]
+
+    const buildScoreDetails = (scoreParams: { [key: string]: string }) => {
+        let message: string = "Score based on a student";
+
+        if (scoreParams["school"]) {
+            message = message + " attending " + scoreParams["school"];
+        }
+
+        if (scoreParams["major"]) {
+            message = message + " majoring in " + scoreParams["major"];
+        }
+
+        if (scoreParams["income"]) {
+            message = message + " with a " + (scoreParams["income"] === "Mid" ? "medium"
+                : scoreParams["income"].toLowerCase()) + " family income";
+        }
+
+        if (scoreParams["gender"]|| scoreParams["firstGen"]) {
+            const identifiers: (string | null)[] = [scoreParams["gender"] ? scoreParams["gender"].toLowerCase() : null,
+                scoreParams["firstGen"] ? scoreParams["firstGen"] === "Yes" ? "first-generation"
+                    : "not first-generation" : null].filter(n => n);
+
+            if (identifiers.length == 2) {
+                message = message + " that identifies as " + identifiers[0] + " and " + identifiers[1];
+            } else if (identifiers.length == 1) {
+                message = message + " that identifies as " + identifiers[0];
+            }
+        }
+
+        message = message + "."
+
+        return message;
+    };
 
     const callAPI = async () => {
         try {
@@ -107,8 +142,29 @@ export default function MoneyScore() {
             const res = await fetch(
                 process.env.NEXT_PUBLIC_BASE_URL + '/app/api/v2/getMoneyScore',
                 payload);
-            const data: { [key: string]: string } = await res.json();
-            console.log(data);
+            const data: { [key: string]: any } = await res.json();
+            setMoneyScore(data);
+            setScores({
+                IncomeScore: {
+                    name: "IncomeScore",
+                    score: Math.round(parseFloat(data["incomeScore"])*100)/100,
+                    scale: ["High Income", "Low Income"],
+                    message: buildScoreDetails(data["incomeParams"])
+                },
+                NetScore: {
+                    name: "NetScore",
+                    score: Math.round(parseFloat(data["netScore"])*100)/100,
+                    scale: null,
+                    message: "The NetScore is determined by combining the results of the IncomeScore and " +
+                        "DebtScore"
+                },
+                DebtScore: {
+                    name: "DebtScore",
+                    score: Math.round(parseFloat(data["debtScore"])*100)/100,
+                    scale: ["Low Debt", "High Debt"],
+                    message: buildScoreDetails(data["debtParams"])
+                }
+            })
         } catch (error) {
             console.log(error);
         }
@@ -151,14 +207,6 @@ export default function MoneyScore() {
         }
     }, [selectedCollege, collegesWithMajors])
 
-    /*
-    const handleSubmit = () => {
-        setCalculatedRate(-1);
-        setSubmitButtonClicked(true);
-        getCalculatedRate().then(() => console.log("Retrieved Calculated Rate"));
-    };
-     */
-
     return (
         <div>
             <RateInfoDialog
@@ -175,7 +223,7 @@ export default function MoneyScore() {
             />
             <div className="flex justify-between pt-4">
                 <div className="px-6"/>
-                <div className="md:w-1/2 sm:w-3/4 text-center dark:text-gray-200 font-bold">
+                <div className="md:w-1/2 sm:w-3/4 text-center dark:text-gray-200 font-bold text-xl">
                     <h2>MoneyScore</h2>
                 </div>
                 <div>
@@ -211,17 +259,23 @@ export default function MoneyScore() {
                                                 onChange(event);
                                             }}>
                                                 <div className="relative flex w-full mt-1">
-                                                    <div className="relative w-full cursor-default overflow-hidden rounded-lg
-                                        bg-white text-left shadow-md focus:outline-none focus-visible:ring-2
-                                        focus-visible:ring-white/75 focus-visible:ring-offset-2
-                                        focus-visible:ring-offset-teal-300 sm:text-sm">
+                                                    <div className="relative w-full cursor-default overflow-hidden
+                                                    rounded-lg bg-white text-left shadow-md focus:outline-none
+                                                    focus-visible:ring-2 focus-visible:ring-white/75
+                                                    focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300
+                                                    sm:text-sm"
+                                                    >
                                                         <Combobox.Input
-                                                            className="flex w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+                                                            className="flex w-full border-none py-2 pl-3 pr-10 text-sm
+                                                            leading-5 text-gray-900 focus:ring-0"
                                                             placeholder="Type Here"
-                                                            onChange={(event) => setQuery(event.target.value)}
+                                                            onChange={(event) =>
+                                                                setQuery(event.target.value)}
                                                         />
                                                         <Combobox.Button
-                                                            className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                                            className="absolute inset-y-0 right-0 flex items-center
+                                                            pr-2"
+                                                        >
                                                             <ChevronUpDownIcon
                                                                 className="h-5 w-5 text-gray-400"
                                                                 aria-hidden="true"
@@ -236,42 +290,53 @@ export default function MoneyScore() {
                                                         afterLeave={() => setQuery('')}
                                                     >
                                                         <Combobox.Options
-                                                            className="absolute mt-10 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                                                            className="absolute mt-10 max-h-60 w-full overflow-auto
+                                                            rounded-md bg-white py-1 text-base shadow-lg ring-1
+                                                            ring-black/5 focus:outline-none sm:text-sm"
                                                             style={{zIndex: 1}}>
                                                             {filteredColleges.length === 0 && query !== '' ? (
                                                                 <div
-                                                                    className="relative cursor-default select-none px-4 py-2 text-gray-700">
+                                                                    className="relative cursor-default select-none px-4
+                                                                    py-2 text-gray-700"
+                                                                >
                                                                     Nothing found.
                                                                 </div>
                                                             ) : (
-                                                                filteredColleges.filter((_college, index) => index < 250).map((college) => (
+                                                                filteredColleges
+                                                                    .filter((_college, index) => index < 250)
+                                                                    .map((college) => (
                                                                     <Combobox.Option
                                                                         key={college}
                                                                         className={({active}) =>
-                                                                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                                                active ? 'bg-teal-600 text-white' : 'text-gray-900'
+                                                                            `relative cursor-default select-none py-2 
+                                                                            pl-10 pr-4 ${ active ? 'bg-teal-600 ' +
+                                                                                'text-white' : 'text-gray-900'
                                                                             }`
                                                                         }
                                                                         value={college}
                                                                     >
                                                                         {({selected, active}) => (
                                                                             <>
-                                                                <span
-                                                                    className={`block truncate ${
-                                                                        selected ? 'font-medium' : 'font-normal'
-                                                                    }`}
-                                                                >
-                                                                    {college}
-                                                                </span>
+                                                                                <span
+                                                                                    className={`block truncate ${
+                                                                                        selected ? 'font-medium' 
+                                                                                            : 'font-normal'
+                                                                                    }`}
+                                                                                >
+                                                                                    {college}
+                                                                                </span>
                                                                                 {selected ? (
                                                                                     <span
-                                                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                                                                            active ? 'text-white' : 'text-teal-600'
+                                                                                        className={`absolute inset-y-0 
+                                                                                        left-0 flex items-center pl-3 ${
+                                                                                            active ? 'text-white' 
+                                                                                                : 'text-teal-600'
                                                                                         }`}
                                                                                     >
-                                                                        <CheckIcon className="h-5 w-5"
-                                                                                   aria-hidden="true"/>
-                                                                    </span>
+                                                                                        <CheckIcon className="h-5 w-5"
+                                                                                                   aria-hidden="true"
+                                                                                        />
+                                                                                    </span>
                                                                                 ) : null}
                                                                             </>
                                                                         )}
@@ -301,15 +366,23 @@ export default function MoneyScore() {
                                                      }}>
                                                 <div className="relative flex w-full mt-1">
                                                     <Listbox.Button
-                                                        className="flex relative w-full py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0cursor-default rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                                                        className="flex relative w-full py-2 pl-3 pr-10 text-sm
+                                                        leading-5 text-gray-900 focus:ring-0cursor-default rounded-lg
+                                                        bg-white text-left shadow-md focus:outline-none
+                                                        focus-visible:ring-2 focus-visible:ring-white/75
+                                                        focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300
+                                                        sm:text-sm"
+                                                    >
                                                         <span className="block truncate">{selectedMajor}</span>
                                                         <span
-                                                            className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                            <ChevronUpDownIcon
-                                                className="h-5 w-5 text-gray-400"
-                                                aria-hidden="true"
-                                            />
-                                        </span>
+                                                            className="pointer-events-none absolute inset-y-0 right-0
+                                                            flex items-center pr-2"
+                                                        >
+                                                            <ChevronUpDownIcon
+                                                                className="h-5 w-5 text-gray-400"
+                                                                aria-hidden="true"
+                                                            />
+                                                        </span>
                                                     </Listbox.Button>
                                                     <Transition
                                                         as={Fragment}
@@ -318,32 +391,42 @@ export default function MoneyScore() {
                                                         leaveTo="opacity-0"
                                                     >
                                                         <Listbox.Options
-                                                            className="absolute mt-10 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
-                                                            style={{zIndex: 1}}>
+                                                            className="absolute mt-10 max-h-60 w-full overflow-auto
+                                                            rounded-md bg-white py-1 text-base shadow-lg ring-1
+                                                            ring-black/5 focus:outline-none sm:text-sm"
+                                                            style={{zIndex: 1}}
+                                                        >
                                                             {majors?.map((major) => (
                                                                 <Listbox.Option
                                                                     key={selectedCollege + major}
                                                                     className={({active}) =>
-                                                                        `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                                            active ? 'bg-teal-600 text-white' : 'text-gray-900'
+                                                                        `relative cursor-default select-none py-2 pl-10 
+                                                                        pr-4 ${ active ? 'bg-teal-600 text-white' 
+                                                                            : 'text-gray-900'
                                                                         }`
                                                                     }
                                                                     value={major}
                                                                 >
                                                                     {({selected}) => (
                                                                         <>
-                                                            <span
-                                                                className={`block truncate ${
-                                                                    selected ? 'font-medium' : 'font-normal'
-                                                                }`}
-                                                            >
-                                                                {major}
-                                                            </span>
+                                                                            <span
+                                                                                className={`block truncate ${
+                                                                                    selected ? 'font-medium' 
+                                                                                        : 'font-normal'
+                                                                                }`}
+                                                                            >
+                                                                                {major}
+                                                                            </span>
                                                                             {selected ? (
                                                                                 <span
-                                                                                    className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                                                    <CheckIcon className="h-5 w-5" aria-hidden="true"/>
-                                                                </span>
+                                                                                    className="absolute inset-y-0
+                                                                                    left-0 flex items-center pl-3"
+                                                                                >
+                                                                                    <CheckIcon
+                                                                                        className="h-5 w-5"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </span>
                                                                             ) : null}
                                                                         </>
                                                                     )}
@@ -353,7 +436,8 @@ export default function MoneyScore() {
                                                     </Transition>
                                                 </div>
                                             </Listbox>
-                                        )}/>
+                                        )}
+                                    />
                                 </div>
                             </div>
                             <div>
@@ -362,8 +446,10 @@ export default function MoneyScore() {
                                         Optional
                                     </h2>
                                 </div>
-                                <div className="flex flex-wrap text-left mx-auto bg-gray-200 dark:bg-slate-600 rounded-md
-                            text-balance pb-4 px-2 my-2">
+                                <div
+                                    className="flex flex-wrap text-left mx-auto bg-gray-200 dark:bg-slate-600
+                                    rounded-md text-balance pb-4 px-2 my-2"
+                                >
                                     <div className="flex-col pt-2 px-2 lg:px-0 lg:pr-1 w-full lg:w-1/3">
                                         <h2 className="pl-2">
                                             Gender
@@ -379,15 +465,23 @@ export default function MoneyScore() {
                                                 })}>
                                                     <div className="relative flex w-full mt-1">
                                                         <Listbox.Button
-                                                            className="flex relative w-full py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0cursor-default rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                                                            className="flex relative w-full py-2 pl-3 pr-10 text-sm
+                                                            leading-5 text-gray-900 focus:ring-0cursor-default
+                                                            rounded-lg bg-white text-left shadow-md focus:outline-none
+                                                            focus-visible:ring-2 focus-visible:ring-white/75
+                                                            focus-visible:ring-offset-2
+                                                            focus-visible:ring-offset-teal-300 sm:text-sm"
+                                                        >
                                                             <span className="block truncate">{selectedGender}</span>
                                                             <span
-                                                                className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                    <ChevronUpDownIcon
-                                                        className="h-5 w-5 text-gray-400"
-                                                        aria-hidden="true"
-                                                    />
-                                                </span>
+                                                                className="pointer-events-none absolute inset-y-0
+                                                                right-0 flex items-center pr-2"
+                                                            >
+                                                                <ChevronUpDownIcon
+                                                                    className="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </span>
                                                         </Listbox.Button>
                                                         <Transition
                                                             as={Fragment}
@@ -396,33 +490,42 @@ export default function MoneyScore() {
                                                             leaveTo="opacity-0"
                                                         >
                                                             <Listbox.Options
-                                                                className="absolute mt-10 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                                                                className="absolute mt-10 max-h-60 w-full overflow-auto
+                                                                rounded-md bg-white py-1 text-base shadow-lg ring-1
+                                                                ring-black/5 focus:outline-none sm:text-sm"
                                                                 style={{zIndex: 1}}>
                                                                 {genders.map((gender) => (
                                                                     <Listbox.Option
                                                                         key={gender}
                                                                         className={({active}) =>
-                                                                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                                                active ? 'bg-teal-600 text-white' : 'text-gray-900'
+                                                                            `relative cursor-default select-none py-2 
+                                                                            pl-10 pr-4 ${ active 
+                                                                                ? 'bg-teal-600 text-white' 
+                                                                                : 'text-gray-900'
                                                                             }`
                                                                         }
                                                                         value={gender}
                                                                     >
                                                                         {({selected}) => (
                                                                             <>
-                                                                    <span
-                                                                        className={`block truncate ${
-                                                                            selected ? 'font-medium' : 'font-normal'
-                                                                        }`}
-                                                                    >
-                                                                      {gender}
-                                                                    </span>
+                                                                                <span
+                                                                                    className={`block truncate ${
+                                                                                        selected ? 'font-medium' 
+                                                                                            : 'font-normal'
+                                                                                    }`}
+                                                                                >
+                                                                                  {gender}
+                                                                                </span>
                                                                                 {selected ? (
                                                                                     <span
-                                                                                        className="absolute inset-y-0 left-0 flex items-center pl-3">
-                                                                            <CheckIcon className="h-5 w-5"
-                                                                                       aria-hidden="true"/>
-                                                                      </span>
+                                                                                        className="absolute inset-y-0
+                                                                                        left-0 flex items-center pl-3"
+                                                                                    >
+                                                                                        <CheckIcon
+                                                                                            className="h-5 w-5"
+                                                                                            aria-hidden="true"
+                                                                                        />
+                                                                                    </span>
                                                                                 ) : null}
                                                                             </>
                                                                         )}
@@ -442,7 +545,9 @@ export default function MoneyScore() {
                                         <div>
                                             <div className="relative w-full mt-1 rounded-lg shadow-md">
                                                 <div
-                                                    className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                                    className="pointer-events-none absolute inset-y-0 left-0 flex
+                                                    items-center pl-3"
+                                                >
                                                     <span className="text-gray-500 sm:text-sm">$</span>
                                                 </div>
                                                 <Controller
@@ -455,13 +560,17 @@ export default function MoneyScore() {
                                                             type="text"
                                                             name="income"
                                                             id="income"
-                                                            className="block w-full rounded-lg border-0 py-1.5 pl-7 pr-20 text-base text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                                                            className="block w-full rounded-lg border-0 py-1.5 pl-7
+                                                            pr-20 text-base text-gray-900 placeholder:text-gray-400
+                                                            focus:ring-0 sm:text-sm sm:leading-6"
                                                             placeholder="0.00"
                                                         />
                                                     )}
                                                 />
                                                 <div
-                                                    className="absolute inset-y-0 right-0 pr-3 flex items-center h-full rounded-md border-0 bg-transparent">
+                                                    className="absolute inset-y-0 right-0 pr-3 flex items-center h-full
+                                                    rounded-md border-0 bg-transparent"
+                                                >
                                                     <span className="text-gray-500 sm:text-sm">USD</span>
                                                 </div>
                                             </div>
@@ -469,17 +578,17 @@ export default function MoneyScore() {
                                     </div>
                                     <div className="flex-col justify-between pt-2 px-2 lg:px-0 lg:pl-1 w-full lg:w-1/3">
                                         <div className="flex justify-between w-full pl-2">
-                                    <span className="w-full text-left">
-                                    First-Gen Student?
-                                    </span>
+                                            <span className="w-full text-left">
+                                                First-Gen Student?
+                                            </span>
                                             <button
                                                 type="button"
                                                 className="text-right text-blue-500 whitespace-nowrap"
                                                 onClick={() => setFirstGenDialogBoxOpen(true)}
                                             >
-                                        <span>
-                                            What&apos;s that?
-                                        </span>
+                                                <span>
+                                                    What&apos;s that?
+                                                </span>
                                             </button>
                                         </div>
                                         <Controller
@@ -493,15 +602,23 @@ export default function MoneyScore() {
                                                 }}>
                                                     <div className="relative flex w-full mt-1">
                                                         <Listbox.Button
-                                                            className="flex relative w-full py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0cursor-default rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                                                            className="flex relative w-full py-2 pl-3 pr-10 text-sm
+                                                            leading-5 text-gray-900 focus:ring-0cursor-default
+                                                            rounded-lg bg-white text-left shadow-md focus:outline-none
+                                                            focus-visible:ring-2 focus-visible:ring-white/75
+                                                            focus-visible:ring-offset-2
+                                                            focus-visible:ring-offset-teal-300 sm:text-sm"
+                                                        >
                                                             <span className="block truncate">{selectedFirstGen}</span>
                                                             <span
-                                                                className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronUpDownIcon
-                                                    className="h-5 w-5 text-gray-400"
-                                                    aria-hidden="true"
-                                                />
-                                                </span>
+                                                                className="pointer-events-none absolute inset-y-0
+                                                                right-0 flex items-center pr-2"
+                                                            >
+                                                                <ChevronUpDownIcon
+                                                                    className="h-5 w-5 text-gray-400"
+                                                                    aria-hidden="true"
+                                                                />
+                                                            </span>
                                                         </Listbox.Button>
                                                         <Transition
                                                             as={Fragment}
@@ -510,33 +627,44 @@ export default function MoneyScore() {
                                                             leaveTo="opacity-0"
                                                         >
                                                             <Listbox.Options
-                                                                className="absolute mt-10 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm"
+                                                                className="absolute mt-10 max-h-60 w-full overflow-auto
+                                                                rounded-md bg-white py-1 text-base shadow-lg ring-1
+                                                                ring-black/5 focus:outline-none sm:text-sm"
                                                                 style={{zIndex: 1}}>
                                                                 {firstGen.map((option) => (
                                                                     <Listbox.Option
                                                                         key={option}
                                                                         className={({active}) =>
-                                                                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                                                active ? 'bg-teal-600 text-white' : 'text-gray-900'
+                                                                            `relative cursor-default select-none py-2 
+                                                                            pl-10 pr-4 ${ active 
+                                                                                ? 'bg-teal-600 text-white' 
+                                                                                : 'text-gray-900'
                                                                             }`
                                                                         }
                                                                         value={option}
                                                                     >
                                                                         {({selected}) => (
                                                                             <>
-                                                                    <span
-                                                                        className={`block truncate ${
-                                                                            selected ? 'font-medium' : 'font-normal'
-                                                                        }`}
-                                                                    >
-                                                                      {option}
-                                                                    </span>
+                                                                                <span
+                                                                                    className={`block truncate ${
+                                                                                        selected 
+                                                                                            ? 'font-medium' 
+                                                                                            : 'font-normal'
+                                                                                    }`}
+                                                                                >
+                                                                                    {option}
+                                                                                </span>
                                                                                 {selected ? (
                                                                                     <span
-                                                                                        className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600">
-                                                                            <CheckIcon className="h-5 w-5"
-                                                                                       aria-hidden="true"/>
-                                                                        </span>
+                                                                                        className="absolute inset-y-0
+                                                                                        left-0 flex items-center pl-3
+                                                                                        text-amber-600"
+                                                                                    >
+                                                                                        <CheckIcon
+                                                                                            className="h-5 w-5"
+                                                                                            aria-hidden="true"
+                                                                                        />
+                                                                                    </span>
                                                                                 ) : null}
                                                                             </>
                                                                         )}
@@ -587,6 +715,107 @@ export default function MoneyScore() {
                             fill="currentFill"/>
                     </svg>
                     <span className="sr-only">Loading...</span>
+                </div> : null
+            }
+            {Object.keys(moneyScore).length > 0 ?
+                <div>
+                    <div className="flex flex-wrap justify-center text-center pt-2">
+                        <div className="flex flex-wrap w-full justify-center">
+                            <div className="w-full lg:w-1/2">
+                                <h2 className="font-bold w-full">{moneyScore?.school}</h2>
+                                <span className="w-full">
+                                    {moneyScore?.city + ", " + moneyScore?.state + " " + moneyScore?.zip}
+                                </span>
+                            </div>
+                            <div className="px-2 lg:px-0 w-full lg:w-1/2">
+                                <div className="w-full">
+                                    <span>
+                                        {moneyScore?.website}
+                                    </span>
+                                </div>
+                                <div className="w-full">
+                                    <span>
+                                        {moneyScore?.netPriceCalculators}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex justify-center">
+                        <div className="hidden lg:flex justify-center max-w-3xl w-full px-2 py-16 sm:px-0">
+                            <div className="flex-wrap justify-center w-full">
+                                <div className="w-full">
+                                    <ScoreBarChart data={Object.values(scores)}/>
+                                </div>
+                                <div className="flex justify-between w-full text-center text-xs text-gray-600
+                                dark:text-gray-400"
+                                >
+                                    <div className="w-1/12"/>
+                                    <div className="w-1/4">
+                                        {scores?.IncomeScore?.message}
+                                    </div>
+                                    <div className="w-1/4">
+                                        {scores?.NetScore?.message}
+                                    </div>
+                                    <div className="w-1/4">
+                                        {scores?.DebtScore?.message}
+                                    </div>
+                                    <div className="w-1/12"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="lg:hidden w-full max-w-md px-2 py-16 sm:px-0">
+                            <Tab.Group>
+                                <Tab.List className="flex space-x-1 rounded-xl bg-gray-200 dark:bg-blue-950 p-1">
+                                    {Object.keys(scores).map((category) => (
+                                        <Tab
+                                            key={category}
+                                            className={({selected}) => {
+                                                return selected
+                                                    ? "w-full rounded-lg py-2.5 text-sm font-medium leading-5 " +
+                                                    "ring-white/60 ring-offset-2 ring-offset-blue-400 " +
+                                                    "focus:outline-none focus:ring-2 bg-white text-sky-700 shadow"
+                                                    : "w-full rounded-lg py-2.5 text-sm font-medium leading-5 " +
+                                                    "ring-white/60 ring-offset-2 ring-offset-blue-400 " +
+                                                    "focus:outline-none focus:ring-2 text-sky-400 " +
+                                                    "hover:bg-white/[0.12] hover:text-white"
+                                            }}
+                                        >
+                                            {category}
+                                        </Tab>
+                                    ))}
+                                </Tab.List>
+                                <Tab.Panels className="mt-2">
+                                    {Object.values(scores).map((data, idx) => (
+                                        <Tab.Panel
+                                            key={"tab-panel" + idx}
+                                            className="rounded-xl text-white bg-gray-200 dark:bg-blue-950 p-3
+                                            ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none
+                                            focus:ring-2"
+                                        >
+                                            <div className="flex justify-center">
+                                                <div className="flex-wrap justify-center">
+                                                    <div className="flex justify-center w-full">
+                                                        <div className="w-3/5">
+                                                            <ScoreBarChart data={[data]}/>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex justify-center w-full">
+                                                        <span
+                                                            className="w-3/5 text-center text-gray-600
+                                                            dark:text-gray-400 text-sm"
+                                                        >
+                                                            {data.message}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Tab.Panel>
+                                    ))}
+                                </Tab.Panels>
+                            </Tab.Group>
+                        </div>
+                    </div>
                 </div> : null
             }
         </div>
