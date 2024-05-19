@@ -178,9 +178,22 @@ export default function MoneyScore() {
         return matches?.map(match => match.startsWith("http") ? match : ("https://" + match));
     };
 
-    const onSubmit: SubmitHandler<any> = (data) => {
-        if (data.income != "") {
-            data.income = convertIncome(data.income);
+    const onSubmit: SubmitHandler<any> = (formInputs) => {
+        console.log(formInputs);
+
+        const data:{ [key: string]: string } = {
+            "school": formInputs.school,
+            "major": formInputs.major
+        };
+
+        if (formInputs.gender != "") {
+            data["gender"] = formInputs.gender;
+        }
+        if (formInputs.firstGen != "") {
+            data["firstGen"] = formInputs.firstGen;
+        }
+        if (formInputs.income != "" && parseFloat(formInputs.income)) {
+            data["income"] = convertIncome(formInputs.income);
         }
         setSubmitButtonClicked(true);
         getMoneyScore(data).then(() => console.log("Retrieved MoneyScore"));
@@ -565,7 +578,7 @@ export default function MoneyScore() {
                                                     render={({field: {onChange}}) => (
                                                         <input
                                                             onChange={onChange}
-                                                            type="text"
+                                                            type="number"
                                                             name="income"
                                                             id="income"
                                                             className="block w-full rounded-lg border-0 py-1.5 pl-7
