@@ -62,13 +62,13 @@ export default function ScoreBarChart({data}: {data: any[]}) {
                     <XAxis tickLine={false} tick={false} /> : null
                 }
                 {data.length === 3 ?
-                    <XAxis dataKey="name" stroke="#6b7280" tickLine={false} /> : null
+                    <XAxis dataKey="name" stroke="#6b7280" fontWeight={700} tickLine={false} /> : null
                 }
                 <YAxis yAxisId={0}
                        domain={[0, 100]}
                        orientation="left"
                        stroke="#6b7280"
-                       tick={{fill: '#6b7280', fontWeight: 600}}
+                       tick={{fill: '#6b7280', fontWeight: 500}}
                        tickFormatter={(tick) => formatYAxis(tick, data[0].scale)}
                 />
                 {data.length === 3 ?
@@ -76,7 +76,7 @@ export default function ScoreBarChart({data}: {data: any[]}) {
                            domain={[0, 100]}
                            orientation="right"
                            stroke="#6b7280"
-                           tick={{fill: '#6b7280', fontWeight: 600}}
+                           tick={{fill: '#6b7280', fontWeight: 500}}
                            tickFormatter={(tick) => formatYAxis(tick, data[2].scale)}
                     /> : null
                 }

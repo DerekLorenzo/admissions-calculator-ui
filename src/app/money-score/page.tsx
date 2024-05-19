@@ -12,7 +12,7 @@ export default function MoneyScore() {
     const [colleges, setColleges] = useState<string[]>([]);
     const [collegesWithMajors, setCollegesWithMajors] = useState<{ [key: string]: any }>({});
     const [majors, setMajors] = useState<string[]>([]);
-    const [query, setQuery] = useState('')
+    const [query, setQuery] = useState('');
     const [selectedCollege, setSelectedCollege] = useState("");
     const [selectedMajor, setSelectedMajor] = useState("Choose One");
     const [selectedFirstGen, setSelectedFirstGen] = useState("Choose One");
@@ -57,13 +57,13 @@ export default function MoneyScore() {
         "Male",
         "Not listed",
         "Prefer not to say"
-    ]
+    ];
 
     const firstGen: string[] = [
         "Yes",
         "No",
         "Not Sure"
-    ]
+    ];
 
     const buildScoreDetails = (scoreParams: { [key: string]: string }) => {
         let message: string = "Score based on a student";
@@ -119,7 +119,7 @@ export default function MoneyScore() {
             cookieSet[name] = val;
         })
         setCookies(cookieSet);
-    }
+    };
 
     const convertIncome = (income: string) => {
         const incomeAsFloat = parseFloat(income);
@@ -128,7 +128,7 @@ export default function MoneyScore() {
         else if (incomeAsFloat > 30000.0 && incomeAsFloat <= 75000) return "Mid"
         else if (incomeAsFloat <= 30000.0) return "Low"
         else return ""
-    }
+    };
 
     const getMoneyScore = async (input: { [key: string]: string }) => {
         try {
@@ -170,13 +170,21 @@ export default function MoneyScore() {
         }
     };
 
+    const linkFormatter = (linkString: string) => {
+        const matches = linkString.match(
+            /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&\/=]*)/g
+        );
+
+        return matches?.map(match => match.startsWith("http") ? match : ("https://" + match));
+    };
+
     const onSubmit: SubmitHandler<any> = (data) => {
         if (data.income != "") {
             data.income = convertIncome(data.income);
         }
         setSubmitButtonClicked(true);
         getMoneyScore(data).then(() => console.log("Retrieved MoneyScore"));
-    }
+    };
 
     if (colleges.length < 5 && !called) {
         setCalled(true);
@@ -718,32 +726,67 @@ export default function MoneyScore() {
                 </div> : null
             }
             {Object.keys(moneyScore).length > 0 ?
-                <div>
-                    <div className="flex flex-wrap justify-center text-center pt-2">
-                        <div className="flex flex-wrap w-full justify-center">
+                <div className="bg-gray-100 dark:bg-gray-800 dark:text-gray-200
+                        shadow-xl border border-solid dark:border-black rounded-xl px-1 pt-6 mx-4 mt-6">
+                    <div className="flex flex-wrap justify-center text-center">
+                        <div
+                            className="flex flex-wrap w-full justify-center border border-solid border-black
+                            dark:border-white rounded-xl mx-2 px-1 py-2 text-wrap break-words"
+                        >
                             <div className="w-full lg:w-1/2">
                                 <h2 className="font-bold w-full">{moneyScore?.school}</h2>
-                                <span className="w-full">
+                                <span className="w-full pt-2 lg:pt-0">
                                     {moneyScore?.city + ", " + moneyScore?.state + " " + moneyScore?.zip}
                                 </span>
                             </div>
-                            <div className="px-2 lg:px-0 w-full lg:w-1/2">
+                            <div className="pt-4 lg:pt-0 px-2 lg:px-0 w-full lg:w-1/2">
                                 <div className="w-full">
                                     <span>
-                                        {moneyScore?.website}
+                                        {
+                                            moneyScore?.website
+                                                ? linkFormatter(moneyScore.website)?.map(link => {
+                                                    return (
+                                                        <div key={link}>
+                                                            <span>
+                                                                <a href={link}>
+                                                                    {link}
+                                                                </a>
+                                                            </span>
+                                                        </div>
+                                                    )
+                                                })
+                                                : ""
+                                        }
                                     </span>
                                 </div>
                                 <div className="w-full">
                                     <span>
-                                        {moneyScore?.netPriceCalculators}
+                                        {
+                                            moneyScore?.netPriceCalculators
+                                                ? linkFormatter(moneyScore.netPriceCalculators)?.map(link => {
+                                                    return (
+                                                        <div key={link}>
+                                                            <span>
+                                                                <a href={link}>
+                                                                    {link}
+                                                                </a>
+                                                            </span>
+                                                        </div>
+                                                    )
+                                                })
+                                                : ""
+                                        }
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="flex justify-center">
-                        <div className="hidden lg:flex justify-center max-w-3xl w-full px-2 py-16 sm:px-0">
-                            <div className="flex-wrap justify-center w-full">
+                        <div
+                            className="hidden lg:flex justify-center max-w-3xl w-full bg-gray-200 dark:bg-slate-800
+                            shadow-xl border border-solid dark:border-black rounded-lg my-8 py-8 sm:px-0"
+                        >
+                            <div className="flex-wrap justify-center w-full px-4">
                                 <div className="w-full">
                                     <ScoreBarChart data={Object.values(scores)}/>
                                 </div>
@@ -764,9 +807,10 @@ export default function MoneyScore() {
                                 </div>
                             </div>
                         </div>
-                        <div className="lg:hidden w-full max-w-md px-2 py-16 sm:px-0">
+                        <div className="lg:hidden w-full max-w-md px-2 py-8 sm:px-0">
                             <Tab.Group>
-                                <Tab.List className="flex space-x-1 rounded-xl bg-gray-200 dark:bg-blue-950 p-1">
+                                <Tab.List className="flex space-x-1 border-solid dark:border-black rounded-xl
+                                bg-gray-200 dark:bg-sky-950 p-1">
                                     {Object.keys(scores).map((category) => (
                                         <Tab
                                             key={category}
@@ -777,8 +821,8 @@ export default function MoneyScore() {
                                                     "focus:outline-none focus:ring-2 bg-white text-sky-700 shadow"
                                                     : "w-full rounded-lg py-2.5 text-sm font-medium leading-5 " +
                                                     "ring-white/60 ring-offset-2 ring-offset-blue-400 " +
-                                                    "focus:outline-none focus:ring-2 text-sky-400 " +
-                                                    "hover:bg-white/[0.12] hover:text-white"
+                                                    "focus:outline-none focus:ring-2 text-sky-400 dark:text-white " +
+                                                    "hover:bg-white/[0.12] hover:text-sky-400"
                                             }}
                                         >
                                             {category}
@@ -789,9 +833,9 @@ export default function MoneyScore() {
                                     {Object.values(scores).map((data, idx) => (
                                         <Tab.Panel
                                             key={"tab-panel" + idx}
-                                            className="rounded-xl text-white bg-gray-200 dark:bg-blue-950 p-3
-                                            ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none
-                                            focus:ring-2"
+                                            className="border-solid dark:border-black rounded-xl text-white bg-gray-200
+                                            dark:bg-sky-950 p-3 ring-white/60 ring-offset-2 ring-offset-blue-400
+                                            focus:outline-none focus:ring-2"
                                         >
                                             <div className="flex justify-center">
                                                 <div className="flex-wrap justify-center">

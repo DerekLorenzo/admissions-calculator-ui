@@ -15,9 +15,9 @@ export default function CombinedRateCalculator() {
     const multiselectRef = useRef<Multiselect>(null);
     const [called, setCalled] = useState(false);
     const infoDialogContents: { [key: string]: any } = {
-        title: "Combined Rate Calculator",
+        title: "CombinedRate",
         body: [
-            "The Combined Rate Calculator is a tool designed to estimate the likelihood that a typical applicant is " +
+            "CombinedRate is a tool designed to estimate the likelihood that a typical applicant is " +
             "admitted to at least one of the colleges or universities provided if the applicant were to apply to all of " +
             "the colleges or universities provided.",
             "This tool does not yet factor in any specific characteristics of the applicant such as GPA, standardized " +
@@ -137,7 +137,7 @@ export default function CombinedRateCalculator() {
             <div className="flex justify-between pt-4">
                 <div className="px-6"/>
                 <div className="md:w-1/2 sm:w-3/4 text-center dark:text-gray-200 font-bold">
-                    <h2>Combined Rate Calculator</h2>
+                    <h2>CombinedRate</h2>
                 </div>
                 <div>
                     <button
