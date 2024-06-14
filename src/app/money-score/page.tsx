@@ -179,17 +179,15 @@ export default function MoneyScore() {
     };
 
     const onSubmit: SubmitHandler<any> = (formInputs) => {
-        console.log(formInputs);
+        const data:{ [key: string]: string } = { "school": formInputs.school };
 
-        const data:{ [key: string]: string } = {
-            "school": formInputs.school,
-            "major": formInputs.major
-        };
-
-        if (formInputs.gender != "") {
+        if (formInputs.major != "Undecided or Not Listed") {
+            data["major"] = formInputs.major;
+        }
+        if (formInputs.gender != ("" || "Not listed" || "Prefer not to say")) {
             data["gender"] = formInputs.gender;
         }
-        if (formInputs.firstGen != "") {
+        if (formInputs.firstGen != ("" || "Not Sure")) {
             data["firstGen"] = formInputs.firstGen;
         }
         if (formInputs.income != "" && parseFloat(formInputs.income)) {
